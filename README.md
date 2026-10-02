@@ -1,55 +1,70 @@
 # DevOps Project
 
-A hands-on DevOps infrastructure lab focused on provisioning AWS resources with Terraform, configuring Linux hosts with Ansible, and building a Jenkins-based CI/CD environment.
-
-## Overview
-
-The project provisions multiple EC2 instances in AWS and uses them as separate roles in a DevOps environment:
-
-- Jenkins controller
-- Jenkins build agent
-- Ansible host
-
-Terraform uses `for_each` to create the required instances from a reusable configuration. Ansible is then used to configure the hosts.
+A multi-stage DevOps lab combining AWS infrastructure provisioning, Ansible configuration, Jenkins CI, Docker image creation and Kubernetes deployment.
 
 ## Architecture
 
-```
-AWS
-└── VPC
-    ├── Jenkins master
-    ├── Jenkins build slave
-    └── Ansible host
+```text
+Terraform
+   |
+   +---- AWS VPC / EC2
+   |
+   +---- AWS EKS
+            |
+            v
+        Kubernetes
+            |
+       Application
+
+Ansible
+   |
+Jenkins controller + build agent
+   |
+Jenkins pipeline
+   |
+Maven build / tests / Docker image
 ```
 
-The infrastructure is configured for the AWS `eu-north-1` region.
+## Infrastructure
+
+Terraform configurations cover AWS resources including VPC/networking, EC2 instances, security groups and EKS-related IAM and cluster configuration.
+
+The EC2 configuration creates separate hosts for Jenkins controller, Jenkins build agent and Ansible automation.
+
+## Configuration management
+
+Ansible playbooks configure the Jenkins hosts. Separate setup playbooks are provided for the Jenkins controller and build agent.
+
+## CI/CD
+
+The Jenkins pipeline uses a Maven-labeled node and automates application build steps. The repository also contains Sonar configuration for the Java project.
+
+## Containerization
+
+The Dockerfile uses Eclipse Temurin JDK 21 and packages a generated Java JAR into a container image.
+
+## Kubernetes
+
+The Kubernetes manifests define:
+
+- Namespace
+- container-registry Secret
+- Deployment
+- NodePort Service
+
+The deployment script applies the Kubernetes resources with kubectl.
 
 ## Technologies
 
+- AWS
 - Terraform
-- AWS EC2
-- AWS VPC and networking
 - Ansible
 - Jenkins
+- Java / Maven
+- Docker
+- Kubernetes
+- kubectl
+- Sonar configuration
 - Linux
-- Git
 
-## What this project demonstrates
-
-- Infrastructure as Code with Terraform
-- Reusable infrastructure using `for_each`
-- AWS networking and EC2 provisioning
-- Linux host configuration with Ansible
-- Separation of CI/CD roles between Jenkins controller and build agent
-- Practical DevOps infrastructure automation
-
-## Project structure
-
-```
-DevOps_Project/
-├── Terraform/
-├── Ansible/
-└── README.md
-```
-
-This is a personal/lab project created to practice infrastructure automation and CI/CD architecture.
+This is a personal DevOps lab demonstrating infrastructure provisioning, host configuration, CI/CD, containerization and Kubernetes deployment in one workflow.
